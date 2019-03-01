@@ -2,3 +2,4 @@ docs/
 docx/
 venv
 .idea
+__pycache__/
