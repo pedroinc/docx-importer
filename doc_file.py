@@ -3,14 +3,13 @@ from docx import Document
 
 
 class DocFile:
-    def __init__(self, filepath):
+    def __init__(self, file_path):
         # super(DocFile, self).__init__()
-        self._docx = Document(filepath)
-        self._file_text = self.read_paragraphs()
-
-    # def __init__(self, filename, from_folder, to_folder):
-    #     super(DocFile, self).__init__(*args, **kwargs)
-    #     pass
+        self._docx = Document(file_path)
+        self._file_lines = self.read_lines()
+        self.license_plate = self.read_license_plate()
+        # self.phone_number, self.other_phone_number = self.match_phone_numbers()
+        # self.customer_name = self.match_customer_name()
 
     def read_tables(self):
         for table in self._docx.tables:
@@ -31,17 +30,17 @@ class DocFile:
     def read_lines(self):
         lines = []
         for line in self._docx.paragraphs:
-            print(line.text.strip())
             trimmed_text = line.text.strip()
             if trimmed_text != '':
                 lines.append(trimmed_text)
         return lines
 
     def read_license_plate(self):
-        pattern = '[a-zA-Z]{3}\s*\d{4}$'
-        print(self._file_text)
-        # print(re.match(pattern, lines))
-        # if match:
-        #     return match.group()
-        return None
+        pattern = "(.*)([a-zA-Z]{3}\s\d{4})(.*)$"
+        for line in self._file_lines:
+            # print(line)
+            match = re.match(pattern, line)
+            if match:
+                return match.group(2)
+        return ''
 
