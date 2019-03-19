@@ -2,7 +2,7 @@ import re
 from docx import Document
 
 
-class DocFile:
+class DocProcessor:
     def __init__(self, file_path):
         # super(DocFile, self).__init__()
         self._docx = Document(file_path)
@@ -11,6 +11,10 @@ class DocFile:
         # self.phone_number, self.other_phone_number = self.match_phone_numbers()
         # self.customer_name = self.match_customer_name()
 
+    # @staticmethod
+    # def set_new_name():
+
+    @staticmethod
     def read_tables(self):
         for table in self._docx.tables:
             for i, row in enumerate(table.rows):
@@ -27,6 +31,7 @@ class DocFile:
                 row_data = dict(zip(keys, text))
                 print(row_data)
 
+    @staticmethod
     def read_lines(self):
         lines = []
         for line in self._docx.paragraphs:
@@ -35,6 +40,7 @@ class DocFile:
                 lines.append(trimmed_text)
         return lines
 
+    @staticmethod
     def read_license_plate(self):
         pattern = "(.*)([a-zA-Z]{3}\s\d{4})(.*)$"
         for line in self._file_lines:

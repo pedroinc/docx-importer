@@ -1,7 +1,7 @@
 import re
 from docx import Document
 import subprocess
-from doc_file import DocFile
+from doc_processor import DocProcessor
 import os
 
 

@@ -1,14 +1,31 @@
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, ForeignKey
+# from sqlalchemy.ext.declarative import declarative_base
+# from sqlalchemy import Column, Integer, String, ForeignKey
 
-Base = declarative_base()
+from db import db
 
 
-class Customer(Base):
+class Document(db.Model):
     __tablename__ = 'documents'
 
-    id = Column(Integer, primary_key=True)
-    customer_name = Column(String)
-    total = Column(String)
-    license_plate = Column(String)
+    id = db.Column(db.Integer, primary_key=True)
+    customer = db.Column(db.String(150))
+    total = db.Column(db.Float(precision=2))
+    # plate = Column(String)
 
+    def __init__(self):
+        self.id = ''
+        self.customer = ''
+        self.email = ''
+        self.phone = ''
+        self.total = ''
+        self.license_plate = ''
+
+    @classmethod
+    def find_by_customer(cls, customer, plate):
+        return cls.query\
+                .filter_by(customer=customer)\
+                .filter_by(plate=plate) #.first()
+
+    # def save_to_db(self):
+    #     db.session.add(self)
+    #     db.session.commit()

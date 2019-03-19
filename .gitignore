@@ -3,3 +3,6 @@ docx/
 venv
 .idea
 __pycache__/
+
+sec*
+create_*
