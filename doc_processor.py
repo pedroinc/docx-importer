@@ -31,7 +31,6 @@ class DocProcessor:
                 row_data = dict(zip(keys, text))
                 print(row_data)
 
-    @staticmethod
     def read_lines(self):
         lines = []
         for line in self._docx.paragraphs:
@@ -40,7 +39,6 @@ class DocProcessor:
                 lines.append(trimmed_text)
         return lines
 
-    @staticmethod
     def read_license_plate(self):
         pattern = "(.*)([a-zA-Z]{3}\s\d{4})(.*)$"
         for line in self._file_lines:
@@ -49,4 +47,7 @@ class DocProcessor:
             if match:
                 return match.group(2)
         return ''
+
+    def read_customer_name(self):
+        pass
 

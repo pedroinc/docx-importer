@@ -1,13 +1,27 @@
 from doc_processor import DocProcessor
-
-
+from docx import Document
+import re
+import os
 
 if __name__ == "__main__":
     # DocFileHandler().convert_docs_to_docx('docs', 'docx')
-    file = DocProcessor('docx/AII 8224 01.06.2010.docx')
-    print(file.read_license_plate())
-    # print(match)
-    # read_tables(doc)
+    my_documents = []
+    from_folder = 'docx'
+
+    try:
+        base_path = os.getcwd()
+        files = os.listdir("{0}/{1}".format(base_path, from_folder))
+
+        for filename in files:
+            path_to_file = '{}/{}/{}'.format(base_path, from_folder, filename)
+            # print(path_to_file)
+
+            file = DocProcessor(path_to_file)
+            print(file.read_customer_name())
+            print(file.read_license_plate())
+    except Exception as e:
+        print(e)
+
 
 
 

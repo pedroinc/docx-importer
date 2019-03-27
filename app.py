@@ -8,8 +8,6 @@ from flask_jwt import JWT
 # from resources.customer import Customer
 # from resources.service import Service, ServiceItem
 # from resources.vehicle import Vehicle
-# from resources.brand import Brand
-# from resources.model import Model
 
 
 app = Flask(__name__)
