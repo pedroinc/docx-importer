@@ -1,8 +1,16 @@
 import re
 from docx import Document
+import subprocess
+import os
 
 
 class DocProcessor:
+
+    LICENSE_PLATE_IN_DOC_PATTERN = "(.*)([a-zA-Z]{3}\s\d{4})(.*)$"
+
+    LICENSE_PLATE_FILENAME_PATTERN = "([a-zA-Z]{3}\s\d{4})"
+
+
     def __init__(self, file_path):
         # super(DocFile, self).__init__()
         self._docx = Document(file_path)
@@ -13,6 +21,26 @@ class DocProcessor:
 
     # @staticmethod
     # def set_new_name():
+
+    @staticmethod
+    def normalize_names():
+        pass
+
+    @staticmethod
+    def convert_docs_to_docx(from_folder, to_folder):
+        try:
+            base_path = os.getcwd()
+            files = os.listdir("{0}/{1}".format(base_path, from_folder))
+
+            for filename in files:
+                if filename.endswith('.doc') and DocProcessor.file_name_valid(filename):
+                    path_to_file = '{}/{}/{}'.format(base_path, from_folder, filename)
+                    subprocess.call(
+                        ['soffice', '--headless', '--convert-to',
+                        'docx', '--outdir', to_folder, path_to_file]
+                    )
+        except Exception as e:
+            print(e)
 
     @staticmethod
     def read_tables(self):
@@ -39,15 +67,18 @@ class DocProcessor:
                 lines.append(trimmed_text)
         return lines
 
+    @staticmethod
+    def file_name_valid(filename):
+        # print(filename)
+        return re.match(DocProcessor.LICENSE_PLATE_FILENAME_PATTERN, filename)
+
     def read_license_plate(self):
-        pattern = "(.*)([a-zA-Z]{3}\s\d{4})(.*)$"
         for line in self._file_lines:
             # print(line)
-            match = re.match(pattern, line)
+            match = re.match(DocProcessor.LICENSE_PLATE_IN_DOC_PATTERN, line)
             if match:
                 return match.group(2)
-        return ''
+        return None
 
     def read_customer_name(self):
         pass
-
