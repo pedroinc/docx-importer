@@ -4,13 +4,7 @@ import subprocess
 from doc_processor import DocProcessor
 import os
 
-
-class DocFileHandler:
-
-    @staticmethod
-    def normalize_names():
-        pass
-
+class DocConverter:
     @staticmethod
     def convert_docs_to_docx(from_folder, to_folder):
         try:
@@ -19,7 +13,8 @@ class DocFileHandler:
 
             for filename in files:
                 if filename.endswith('.doc'):
-                    path_to_file = '{}/{}/{}'.format(base_path, from_folder, filename)
+                    path_to_file = '{}/{}/{}'.format(
+                        base_path, from_folder, filename)
                     subprocess.call(
                         ['soffice', '--headless', '--convert-to',
                         'docx', '--outdir', to_folder, path_to_file]

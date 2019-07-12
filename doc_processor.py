@@ -1,22 +1,13 @@
 import re
-from docx import Document
-
 
 class DocProcessor:
-    def __init__(self, file_path):
-        # super(DocFile, self).__init__()
-        self._docx = Document(file_path)
-        self._file_lines = self.read_lines()
-        self.license_plate = self.read_license_plate()
-        # self.phone_number, self.other_phone_number = self.match_phone_numbers()
-        # self.customer_name = self.match_customer_name()
-
-    # @staticmethod
-    # def set_new_name():
+    def __init__(self, docx_obj):
+        self._docx = docx_obj
 
     @staticmethod
-    def read_tables(self):
-        for table in self._docx.tables:
+    def read_table_content(doc_tables):
+        content_lines = []
+        for table in doc_tables:         
             for i, row in enumerate(table.rows):
                 text = (cell.text for cell in row.cells)
 
@@ -29,9 +20,10 @@ class DocProcessor:
                 # Construct a dictionary for this row, mapping
                 # keys to values for this row
                 row_data = dict(zip(keys, text))
-                print(row_data)
+                content_lines.append(row_data)
+                # print(row_data)
+        return content_lines
 
-    @staticmethod
     def read_lines(self):
         lines = []
         for line in self._docx.paragraphs:
@@ -41,12 +33,18 @@ class DocProcessor:
         return lines
 
     @staticmethod
-    def read_license_plate(self):
+    def read_license_plate(lines):
         pattern = "(.*)([a-zA-Z]{3}\s\d{4})(.*)$"
-        for line in self._file_lines:
-            # print(line)
+        for line in lines:
             match = re.match(pattern, line)
             if match:
                 return match.group(2)
         return ''
 
+    def extract_data(self):
+        lines = self.read_lines()
+
+        return {
+            "license_plate" : DocProcessor.read_license_plate(lines),
+            "tables": DocProcessor.read_table_content(self._docx.tables)
+        }
