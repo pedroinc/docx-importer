@@ -46,5 +46,5 @@ class DocProcessor:
 
         return {
             "license_plate" : DocProcessor.read_license_plate(lines),
-            "tables": DocProcessor.read_table_content(self._docx.tables)
+            "table_itens": DocProcessor.read_table_content(self._docx.tables)
         }
