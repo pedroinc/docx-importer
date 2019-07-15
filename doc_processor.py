@@ -41,8 +41,14 @@ class DocProcessor:
                 return match.group(2)
         return ''
 
+    def add_service_itens(self):
+        pass
+
+    def add_parts(self):
+        pass
+
     def extract_data(self):
-        lines = self.read_lines()
+        lines = self.read_lines()        
 
         return {
             "license_plate" : DocProcessor.read_license_plate(lines),
