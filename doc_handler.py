@@ -1,7 +1,4 @@
-import re
-from docx import Document
 import subprocess
-from doc_processor import DocProcessor
 import os
 
 class DocConverter:

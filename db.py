@@ -3,8 +3,6 @@ from sqlalchemy import create_engine
 
 db = create_engine('sqlite:///data.db')
 
-
-
 def setup_once(dburl, echo, num):
     "setup once.  create an engine, insert fixture data"
     global engine

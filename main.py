@@ -1,17 +1,43 @@
 from doc_processor import DocProcessor
 from docx import Document
+import os
 
 
 if __name__ == "__main__":
-    # DocConverter().convert_docs_to_docx('docs', 'docx')
-   
-    docs_folder = '/home/placerda/Downloads/pessoal/docs_ofi/all_docx/'
-    doc = Document('{}AII 8224 01.06.2010.docx'.format(docs_folder))
-    doc_processor = DocProcessor(doc)
+        
+    data_file = open('data.csv','w')
 
-    print(doc_processor.extract_data()['license_plate'])
-    # print(match)
-    # read_tables(doc)
+    docs_folder = '/home/placerda/Downloads/mecanica/all_docx/'
+    files = os.listdir(docs_folder)
+    counter = 1
+
+    for filename in files:
+        print(filename)
+        if counter >= 100:
+            break        
+
+        doc = Document('{}{}'.format(docs_folder, filename))
+        doc_processor = DocProcessor(doc)
+
+        data = doc_processor.extract_data()
+
+        plate = data['license_plate']
+        vehicle = data['vehicle_name']
+        phone_numbers = data['phone_numbers']
+        customer = data['customer']
+        date = data['date']
+
+        data_file.write("{},{},{},{},{} \n".format(
+            plate, 
+            vehicle, 
+            phone_numbers,
+            customer,
+            date))
+        
+        counter = counter + 1
+
+        # print(match)
+        # read_tables(doc)
 
 
 
