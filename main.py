@@ -13,8 +13,8 @@ if __name__ == "__main__":
 
     for filename in files:
         print(filename)
-        if counter >= 100:
-            break        
+        # if counter >= 100:
+        #     break        
 
         doc = Document('{}{}'.format(docs_folder, filename))
         doc_processor = DocProcessor(doc)

@@ -1,6 +1,15 @@
 import re
+from enum import Enum
 
-class DocProcessor:
+class RegexFieldTypes:
+    #SERVICE_DATE = r'\d{2}.\d{2}.\d{4}'
+    SERVICE_DATE = r'(DATA:)(.*)'       
+    LICENSE_PLATE = r'(.*)([a-zA-Z]{3}\s\d{4})(.*)'
+    VEHICLE_NAME = r'(CULO:)([a-zA-Z0-9. ]+)'
+    PHONE = r'(TEL.:)(.*)([0-9]{4}.[0-9]{4})$'    
+    CUSTOMER = r'(PROP.:)(.*)'
+
+class DocProcessor:    
     def __init__(self, docx_obj):
         self._docx = docx_obj
 
@@ -35,57 +44,32 @@ class DocProcessor:
         return lines
 
     @staticmethod
-    def read_vehicle_name(lines):
-        pattern = "(CULO:)(.*\s)"
+    def read_phones(lines):
+        pattern = RegexFieldTypes.PHONE  
         for line in lines:
             match = re.match(pattern, line)
             if match:
-                return match.group(2)
-        return 'NOME_VEICULO'
+                return match.group(2).replace('/', ''), match.group(3)
+        return 'NULO'
 
     @staticmethod
-    def read_license_plate(lines):
-        pattern = "(.*)([a-zA-Z]{3}\s\d{4})(.*)$"
+    def read_field(lines, regex, match_group):
         for line in lines:
-            match = re.match(pattern, line)
+            match = re.search(regex, line)
             if match:
-                return match.group(2).strip()
-        return ''
-
-    @staticmethod
-    def read_customer(lines):
-        pattern = "(PROP.:)(.*)"
-        for line in lines:
-            match = re.match(pattern, line)
-            if match:
-                return match.group(2).strip()
-        return ''
-
-    @staticmethod
-    def read_phone(lines):
-        pattern = "(TEL.:)(.*\s)([0-9]{4} [0-9]{4})"        
-        for line in lines:
-            match = re.match(pattern, line)
-            if match:
-                return match.group(2), match.group(3)
-        return ''        
-
-    @staticmethod
-    def read_date(lines):
-        for line in lines:
-            match = re.search(r'\d{2}.\d{2}.\d{4}$', line)
-            if match:
-                return match.group(0)
-        return 'DATA_SERVICO'     
-
+                return ' '.join(match.group(match_group).strip().split())
+        return 'NULO'
+        
     def extract_data(self):
         lines = self.read_lines()
 
+        phones = DocProcessor.read_phones(lines)
+
         return {
-            "license_plate" : DocProcessor.read_license_plate(lines),
-            "vehicle_name" : DocProcessor.read_vehicle_name(lines),
-            "phone_numbers" : DocProcessor.read_phone(lines),
-            "customer" : DocProcessor.read_customer(lines),
-            "date" : DocProcessor.read_date(lines),
+            "license_plate" : DocProcessor.read_field(lines, RegexFieldTypes.LICENSE_PLATE, 2),
+            "vehicle_name" : DocProcessor.read_field(lines, RegexFieldTypes.VEHICLE_NAME, 2),
+            "phone_numbers" : '{};{}'.format(phones[0], phones[1]),
+            "customer" : DocProcessor.read_field(lines, RegexFieldTypes.CUSTOMER, 2),
+            "date" : DocProcessor.read_field(lines, RegexFieldTypes.SERVICE_DATE, 2),
             #"tables": DocProcessor.read_table_content(self._docx.tables)
         }
