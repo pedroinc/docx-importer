@@ -49,8 +49,8 @@ class DocProcessor:
         for line in lines:
             match = re.match(pattern, line)
             if match:
-                return match.group(2).replace('/', ''), match.group(3)
-        return 'NULO'
+                return match.group(2), match.group(3)
+        return ''
 
     @staticmethod
     def read_field(lines, regex, match_group):
@@ -58,7 +58,7 @@ class DocProcessor:
             match = re.search(regex, line)
             if match:
                 return ' '.join(match.group(match_group).strip().split())
-        return 'NULO'
+        return ''
         
     def extract_data(self):
         lines = self.read_lines()
@@ -68,7 +68,7 @@ class DocProcessor:
         return {
             "license_plate" : DocProcessor.read_field(lines, RegexFieldTypes.LICENSE_PLATE, 2),
             "vehicle_name" : DocProcessor.read_field(lines, RegexFieldTypes.VEHICLE_NAME, 2),
-            "phone_numbers" : '{};{}'.format(phones[0], phones[1]),
+            "phone_numbers" : phones,
             "customer" : DocProcessor.read_field(lines, RegexFieldTypes.CUSTOMER, 2),
             "date" : DocProcessor.read_field(lines, RegexFieldTypes.SERVICE_DATE, 2),
             #"tables": DocProcessor.read_table_content(self._docx.tables)
