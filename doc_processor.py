@@ -5,8 +5,8 @@ class RegexFieldTypes:
     #SERVICE_DATE = r'\d{2}.\d{2}.\d{4}'
     SERVICE_DATE = r'(DATA:)(.*)'       
     LICENSE_PLATE = r'(.*)([a-zA-Z]{3}\s\d{4})(.*)'
-    VEHICLE_NAME = r'(CULO:)([a-zA-Z0-9. ]+)'
-    PHONE = r'(TEL.:)(.*)([0-9]{4}.[0-9]{4})$'    
+    VEHICLE_NAME = r'(CULO:)([a-zA-Z0-9. ][^#\r\n]{1,40})'
+    PHONE = r'(TEL.:)(.*)([0-9/ ])'    
     CUSTOMER = r'(PROP.:)(.*)'
 
 class DocProcessor:    
@@ -49,8 +49,10 @@ class DocProcessor:
         for line in lines:
             match = re.match(pattern, line)
             if match:
-                return match.group(2), match.group(3)
-        return ''
+                #return match.group(2)
+                phones = match.group(2).split('/')
+                return phones[0].strip(), phones[1].strip() if len(phones) > 1 else phones[0].strip()
+        return 'CAMPO_VAZIO', 'CAMPO_VAZIO'
 
     @staticmethod
     def read_field(lines, regex, match_group):
@@ -58,7 +60,7 @@ class DocProcessor:
             match = re.search(regex, line)
             if match:
                 return ' '.join(match.group(match_group).strip().split())
-        return ''
+        return 'CAMPO_VAZIO'
         
     def extract_data(self):
         lines = self.read_lines()
