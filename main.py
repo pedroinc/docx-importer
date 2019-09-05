@@ -15,8 +15,8 @@ if __name__ == "__main__":
 
     for filename in files:
         print(filename)
-        if counter >= 1000:
-            break        
+#        if counter >= 3000:
+#            break        
         doc = Document('{}{}'.format(docs_folder, filename))
         doc_processor = DocProcessor(doc)
 
@@ -28,21 +28,15 @@ if __name__ == "__main__":
         customer = data['customer']
         date = data['date']
 
-        file_document.write("{},{},{},{},{} \n".format(
-            plate, 
-            vehicle, 
-            phone1,
-            phone2,
-            customer,
-            date))
-        
-        counter = counter + 1
+        if plate != 'CAMPO_VAZIO':
+            file_document.write("{},{},{},{},{},{} \n".format(
+                plate, 
+                vehicle, 
+                phone1,
+                phone2,
+                customer,
+                date))
 
+            counter = counter + 1
         # print(match)
         # read_tables(doc)
-
-
-
-
-
-

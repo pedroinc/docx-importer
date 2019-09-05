@@ -1,5 +1,6 @@
 import re
 from enum import Enum
+from datetime import datetime
 
 class RegexFieldTypes:
     #SERVICE_DATE = r'\d{2}.\d{2}.\d{4}'
@@ -7,7 +8,7 @@ class RegexFieldTypes:
     LICENSE_PLATE = r'(.*)([a-zA-Z]{3}\s\d{4})(.*)'
     VEHICLE_NAME = r'(CULO:)([a-zA-Z0-9. ][^#\r\n]{1,40})'
     PHONE = r'(TEL.:)(.*)([0-9/ ])'    
-    CUSTOMER = r'(PROP.:)(.*)'
+    CUSTOMER = r'(PROP.:)(.*)'    
 
 class DocProcessor:    
     def __init__(self, docx_obj):
@@ -43,15 +44,13 @@ class DocProcessor:
             index = index + 1
         return lines
 
-    @staticmethod
-    def read_phones(lines):
+    def read_phones(self, lines):
         pattern = RegexFieldTypes.PHONE  
         for line in lines:
             match = re.match(pattern, line)
             if match:
-                #return match.group(2)
                 phones = match.group(2).split('/')
-                return phones[0].strip(), phones[1].strip() if len(phones) > 1 else phones[0].strip()
+                return self.format_phone(phones[0]), self.format_phone(phones[1]) if len(phones) > 1 else self.format_phone(phones[0])
         return 'CAMPO_VAZIO', 'CAMPO_VAZIO'
 
     @staticmethod
@@ -62,16 +61,31 @@ class DocProcessor:
                 return ' '.join(match.group(match_group).strip().split())
         return 'CAMPO_VAZIO'
         
+    def format_phone(self, phone_string):
+        return phone_string.strip().replace('(', '').replace(')', '').replace(' ', '')
+
+    def format_to_iso_date(self, str_date):
+        if str_date == 'CAMPO_VAZIO':
+            return str_date
+
+        str_date_hyphen = str_date.replace(' ', '').replace(',', '.').replace('.', '-')        
+        try:
+            date_object = datetime.strptime(str_date_hyphen, '%d-%m-%Y').date()
+            return date_object.isoformat()
+        except Exception as e:
+            print(e)
+            return 'ERRO'
+        
+
     def extract_data(self):
         lines = self.read_lines()
-
-        phones = DocProcessor.read_phones(lines)
+        phones = self.read_phones(lines)
 
         return {
             "license_plate" : DocProcessor.read_field(lines, RegexFieldTypes.LICENSE_PLATE, 2),
             "vehicle_name" : DocProcessor.read_field(lines, RegexFieldTypes.VEHICLE_NAME, 2),
             "phone_numbers" : phones,
             "customer" : DocProcessor.read_field(lines, RegexFieldTypes.CUSTOMER, 2),
-            "date" : DocProcessor.read_field(lines, RegexFieldTypes.SERVICE_DATE, 2),
+            "date" : self.format_to_iso_date(DocProcessor.read_field(lines, RegexFieldTypes.SERVICE_DATE, 2)),
             #"tables": DocProcessor.read_table_content(self._docx.tables)
         }
