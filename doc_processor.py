@@ -1,6 +1,9 @@
 import re
 from enum import Enum
 from datetime import datetime
+from pprint import pprint
+from itertools import chain
+
 
 class RegexFieldTypes:
     #SERVICE_DATE = r'\d{2}.\d{2}.\d{4}'
@@ -10,14 +13,39 @@ class RegexFieldTypes:
     PHONE = r'(TEL.:)(.*)([0-9/ ])'    
     CUSTOMER = r'(PROP.:)(.*)'    
 
+
 class DocProcessor:    
+
+    BUDGET_TAG = 'ORÇ'
+
     def __init__(self, docx_obj):
         self._docx = docx_obj
 
     @staticmethod
-    def read_table_content(doc_tables):
+    def is_doc_budget(filename):
+        return True if DocProcessor.BUDGET_TAG in filename else False;
+
+    @staticmethod
+    def set_nice_looking_keys(tuple_headers):
+        new_keys = []
+        for item in tuple_headers:
+            if 'DESCRI' in item:
+                new_keys.append('description')
+            elif 'FAB' in item:
+                new_keys.append('factory_code')
+            elif 'GENU' in item:
+                new_keys.append('genuine')                
+            elif 'OUTRA' in item:
+                new_keys.append('other')
+            elif 'PRE' in item:
+                new_keys.append('price') 
+            else:
+                new_keys.append(item.lower()) 
+        return tuple(new_keys)
+
+    def read_table_content(self):
         content_lines = []
-        for table in doc_tables:         
+        for table in self._docx.tables:         
             for i, row in enumerate(table.rows):
                 text = (cell.text for cell in row.cells)
 
@@ -26,12 +54,30 @@ class DocProcessor:
                 if i == 0:
                     keys = tuple(text)
                     continue
-
+                
                 # Construct a dictionary for this row, mapping
                 # keys to values for this row
-                row_data = dict(zip(keys, text))
-                content_lines.append(row_data)
-                # print(row_data)
+
+                cool_keys = DocProcessor.set_nice_looking_keys(keys)
+                row_data = dict(zip(cool_keys, text))
+                
+                pprint(row_data.get('description'))
+                if row_data.get('description').strip() != '':
+                    #service item
+                    if 'price' in row_data:
+                        str_price = row_data['price'].replace(',', '.') if ',' in row_data['price'] else row_data['price']
+
+                        content_lines.append({ 
+                            description: row_data.get('description'),
+                            price: str_price
+                        })
+                    elif 'genuine' in row_data:
+                        content_lines.append({
+                            description: row_data.get('description'),
+                            genuine: row_data['genuine'].replace(',', '.') if row_data['genuine'] else row_data['genuine'],
+                            other: row_data['other'].replace(',', '.') if row_data['other'] else row_data['other'],
+                        })
+                    content_lines.append(row_data)
         return content_lines
 
     def read_lines(self):
@@ -76,10 +122,12 @@ class DocProcessor:
             print(e)
             return 'ERRO'
         
-
     def extract_data(self):
         lines = self.read_lines()
+        table_content = self.read_table_content()
         phones = self.read_phones(lines)
+
+        #pprint(table_content)
 
         return {
             "license_plate" : DocProcessor.read_field(lines, RegexFieldTypes.LICENSE_PLATE, 2),
@@ -87,5 +135,4 @@ class DocProcessor:
             "phone_numbers" : phones,
             "customer" : DocProcessor.read_field(lines, RegexFieldTypes.CUSTOMER, 2),
             "date" : self.format_to_iso_date(DocProcessor.read_field(lines, RegexFieldTypes.SERVICE_DATE, 2)),
-            #"tables": DocProcessor.read_table_content(self._docx.tables)
         }
