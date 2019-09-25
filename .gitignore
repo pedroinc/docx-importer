@@ -1,7 +1,10 @@
 docs/
 docx/
+csv_files/
 venv
 .idea
+.env
+*.db
 __pycache__/
 
 sec*

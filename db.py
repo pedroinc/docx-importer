@@ -5,10 +5,11 @@ from sqlalchemy_utils import CurrencyType, Currency
 
 Base = declarative_base()
 
-class Document(Base):
-    __tablename__ = 'document'
 
-    id = Column(BigInteger, primary_key=True)
+class Service(Base):
+    __tablename__ = 'service'
+
+    id = Column(Integer, primary_key=True)
     is_estimate = Column(Boolean)
     vehicle = Column(String)
     chassis = Column(String)
@@ -22,26 +23,36 @@ class Document(Base):
     total = Column(CurrencyType)
 
 
-class ServiceItem(Base):
+class ServiceTask(Base):
     __tablename__ = 'service_item'
 
-    id = Column(BigInteger, primary_key=True)
+    id = Column(Integer, primary_key=True)
     description = Column(String)
     price = Column(CurrencyType)
-    document_id = Column(ForeignKey('document.id'))
+    document_id = Column(ForeignKey('service.id'))
 
 
-class Part(Base):
+class ServicePart(Base):
     __tablename__ = 'part'
 
-    id = Column(BigInteger, primary_key=True)
+    id = Column(Integer, primary_key=True)
     description = Column(String)    
     price_genuine = Column(CurrencyType)
     price_other = Column(CurrencyType)
-    document_id = Column(ForeignKey('document.id'))
+    document_id = Column(ForeignKey('service.id'))
 
 
-engine = create_engine('sqlite:///data.db', echo=True)
+class User(Base):
+    __tablename__ = 'user'
+
+    id = Column(Integer, primary_key=True)
+    username = Column(String)
+    password = Column(String)
+
+
+# engine = create_engine('sqlite:///data.db', echo=True)
+engine = create_engine('sqlite:///data.db', convert_unicode=True)
+
 Base.metadata.create_all(bind=engine)
 
 # Session = sessionmaker(bind=engine)

@@ -7,11 +7,10 @@ class CsvCreator:
         self.filename = filename
         self.docs_folder = docs_folder        
 
-    def create(self):
+    def create(self):                
         file_document = open(self.filename,'w')
-        # docs_folder = '/home/placerda/Downloads/mecanica/all_docx/'
         files = os.listdir(self.docs_folder)
-        file_document.write("LICENSE_PLATE, VEHICLE, PHONE_1, PHONE_2, CLIENT, SERVICE_DATE \n")
+        file_document.write("LICENSE_PLATE, VEHICLE_NAME, VEHICLE_NUMBER, PHONE_1, PHONE_2, CLIENT, SERVICE_DATE \n")
 
         counter = 1
 
@@ -25,7 +24,8 @@ class CsvCreator:
             data = doc_processor.extract_data()
 
             plate = data['license_plate']
-            vehicle = data['vehicle_name']        
+            vehicle_name = data['vehicle_name']       
+            vehicle_number = data['vehicle_number']
             phone1, phone2 = data['phone_numbers']
             customer = data['customer']
             date = data['date']
@@ -33,7 +33,8 @@ class CsvCreator:
             if plate != 'CAMPO_VAZIO':
                 file_document.write("{},{},{},{},{},{} \n".format(
                     plate, 
-                    vehicle, 
+                    vehicle_name,
+                    vehicle_number,
                     phone1,
                     phone2,
                     customer,

@@ -1,6 +1,6 @@
+import os
 import re
 from docx import Document
-import os
 from enum import Enum
 from datetime import datetime
 
@@ -8,7 +8,10 @@ class RegexFieldTypes:
     #SERVICE_DATE = r'\d{2}.\d{2}.\d{4}'
     SERVICE_DATE = r'(DATA:)(.*)'       
     LICENSE_PLATE = r'(.*)([a-zA-Z]{3}\s\d{4})(.*)'
-    VEHICLE_NAME = r'(CULO:)([a-zA-Z0-9. ][^#\r\n]{1,40})'
+    VEHICLE_NAME = r'(CULO:)([a-zA-Z0-9. ][^#\r\n]{1,40})'    
+    
+    # vin number: vehicle identification number (chassi)
+    VEHICLE_NUMBER = r'(CHASSI:)([a-zA-Z0-9. ][^#\r\n]{1,18})'
     PHONE = r'(TEL.:)(.*)([0-9/ ])'    
     CUSTOMER = r'(PROP.:)(.*)'    
 
@@ -86,7 +89,8 @@ class DocProcessor:
         return {
             "license_plate" : DocProcessor.read_field(lines, RegexFieldTypes.LICENSE_PLATE, 2),
             "vehicle_name" : DocProcessor.read_field(lines, RegexFieldTypes.VEHICLE_NAME, 2),
-            "phone_numbers" : phones,
+            "vehicle_number" : DocProcessor.read_field(lines, RegexFieldTypes.VEHICLE_NUMBER, 2),
+            "phone_numbers" : phones,            
             "customer" : DocProcessor.read_field(lines, RegexFieldTypes.CUSTOMER, 2),
             "date" : self.format_to_iso_date(DocProcessor.read_field(lines, RegexFieldTypes.SERVICE_DATE, 2)),
             #"tables": DocProcessor.read_table_content(self._docx.tables)
