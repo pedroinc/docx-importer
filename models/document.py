@@ -1,11 +1,11 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, BigInteger, String, Boolean, ForeignKey
+from sqlalchemy_utils import CurrencyType, Currency
+from sqlalchemy import Column, BigInteger, String, Dec Float, Boolean, ForeignKey
 
 Base = declarative_base()
 
-
 class Document(Base):
-    __tablename__ = 'documents'
+    __tablename__ = 'document'
 
     id = Column(BigInteger, primary_key=True)
     is_estimate = Column(Boolean)
@@ -14,7 +14,8 @@ class Document(Base):
     plate = Column(String)
     customer = Column(String)
     address = Column(String)
-    phone = Column(String)
+    phone1 = Column(String)
+    phone2 = Column(String)
     date = Column(String)
     others = Column(String)
     total = Column(String)
@@ -26,7 +27,8 @@ class Document(Base):
         self.plate = ''
         self.customer = ''
         self.address = ''
-        self.phone = ''
+        self.phone1 = ''
+        self.phone2 = ''
         self.date = ''
         self.others = ''
         self.total = ''
@@ -41,24 +43,18 @@ class Document(Base):
     #     db.session.add(self)
     #     db.session.commit()
 
-
 class ServiceItem(Base):
-    __tablename__ = 'service_items'
+    __tablename__ = 'service_item'
     id = Column(BigInteger, primary_key=True)
     description = Column(String)
-    price = Column(String)
-    service_id = Column(ForeignKey('service.id'))
-
-    def __init__(self):
-        self.id = ''
-        self.description = ''
-        self.price = ''
-        self.total = ''
+    price = Column(CurrencyType)
+    document_id = Column(ForeignKey('document.id'))
 
 
-class Parts(Base):
-    __tablename__ = 'parts'
+class Part(Base):
+    __tablename__ = 'part'
     id = Column(BigInteger, primary_key=True)
-    description = Column(String)
-    price = Column(String)
-    part_id = Column(ForeignKey('part.id'))
+    description = Column(String)    
+    price_genuine = Column(CurrencyType)
+    price_other = Column(CurrencyType)
+    document_id = Column(ForeignKey('document.id'))
