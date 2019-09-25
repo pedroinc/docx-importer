@@ -1,17 +1,51 @@
-# from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, Column, BigInteger, String, Boolean, ForeignKey
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy_utils import CurrencyType, Currency
 
-db = create_engine('sqlite:///data.db')
+Base = declarative_base()
 
-def setup_once(dburl, echo, num):
-    "setup once.  create an engine, insert fixture data"
-    global engine
-    engine = create_engine(dburl, echo=echo)
-    Base.metadata.drop_all(engine)
-    Base.metadata.create_all(engine)
-    # sess = Session(engine)
-    # sess.add_all([
-    #     Parent(children=[Child() for j in range(100)])
-    #     for i in range(num)
-    # ])
-    sess.commit()
+class Document(Base):
+    __tablename__ = 'document'
+
+    id = Column(BigInteger, primary_key=True)
+    is_estimate = Column(Boolean)
+    vehicle = Column(String)
+    chassis = Column(String)
+    plate = Column(String)
+    customer = Column(String)
+    address = Column(String)
+    phone1 = Column(String)
+    phone2 = Column(String)
+    date = Column(String)
+    others = Column(String)
+    total = Column(CurrencyType)
+
+
+class ServiceItem(Base):
+    __tablename__ = 'service_item'
+
+    id = Column(BigInteger, primary_key=True)
+    description = Column(String)
+    price = Column(CurrencyType)
+    document_id = Column(ForeignKey('document.id'))
+
+
+class Part(Base):
+    __tablename__ = 'part'
+
+    id = Column(BigInteger, primary_key=True)
+    description = Column(String)    
+    price_genuine = Column(CurrencyType)
+    price_other = Column(CurrencyType)
+    document_id = Column(ForeignKey('document.id'))
+
+
+engine = create_engine('sqlite:///data.db', echo=True)
+Base.metadata.create_all(bind=engine)
+
+# Session = sessionmaker(bind=engine)
+# session = Session()
+# session.add(obj)
+# session.commit()
+# session.close()
