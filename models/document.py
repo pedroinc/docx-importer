@@ -20,35 +20,12 @@ class Document(Base):
     others = Column(String)
     total = Column(String)
 
-    def __init__(self):
-        self.id = ''
-        self.vehicle = ''
-        self.chassis = ''
-        self.plate = ''
-        self.customer = ''
-        self.address = ''
-        self.phone1 = ''
-        self.phone2 = ''
-        self.date = ''
-        self.others = ''
-        self.total = ''
-
-    @classmethod
-    def search(cls, customer, vehicle):
-        return cls.query\
-                .filter_by(customer=customer)\
-                .filter_by(vehicle=vehicle) #.first()
-
-    # def save_to_db(self):
-    #     db.session.add(self)
-    #     db.session.commit()
-
 class ServiceItem(Base):
     __tablename__ = 'service_item'
     id = Column(BigInteger, primary_key=True)
     description = Column(String)
     price = Column(CurrencyType)
-    document_id = Column(ForeignKey('document.id'))
+    document_id = Column(BigInteger, ForeignKey('document.id'))
 
 
 class Part(Base):

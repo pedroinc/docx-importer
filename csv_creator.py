@@ -1,5 +1,6 @@
 from doc_processor import DocProcessor
 from docx import Document
+from docx.opc.exceptions import PackageNotFoundError 
 import os
 
 class CsvCreator:
@@ -10,34 +11,48 @@ class CsvCreator:
     def create(self):                
         file_document = open(self.filename,'w')
         files = os.listdir(self.docs_folder)
-        file_document.write("LICENSE_PLATE, VEHICLE_NAME, VEHICLE_NUMBER, PHONE_1, PHONE_2, CLIENT, SERVICE_DATE \n")
+
+        file_columns = "LICENSE_PLATE, VEHICLE_NAME, VEHICLE_NUMBER, PHONE_1, PHONE_2, CLIENT, SERVICE_DATE, IS_BUDGET \n"""
+
+        file_document.write(file_columns)
 
         counter = 1
+        budget_counter = 0
 
-        for filename in files:
-            print(filename)
-    #        if counter >= 3000:
-    #            break        
-            doc = Document('{}{}'.format(self.docs_folder, filename))
+        for filename in files:            
+            if counter > 100:
+               break
+
+            try:
+                doc = Document('{}{}'.format(self.docs_folder, filename))
+            except PackageNotFoundError as error:
+                print('erro no arquivo {}'.format(filename))
+                continue
+            
             doc_processor = DocProcessor(doc)
 
             data = doc_processor.extract_data()
 
             plate = data['license_plate']
-            vehicle_name = data['vehicle_name']       
-            vehicle_number = data['vehicle_number']
             phone1, phone2 = data['phone_numbers']
-            customer = data['customer']
-            date = data['date']
+            is_budget = data['is_budget']
 
             if plate != 'CAMPO_VAZIO':
-                file_document.write("{},{},{},{},{},{} \n".format(
+
+                if is_budget == 1:
+                    budget_counter = budget_counter + 1
+                    print(filename)
+
+                file_document.write("{},{},{},{},{},{},{} \n".format(
                     plate, 
-                    vehicle_name,
-                    vehicle_number,
+                    data['vehicle_name'],
+                    data['vehicle_number'],
                     phone1,
                     phone2,
-                    customer,
-                    date))
+                    data['customer'],
+                    data['date'],
+                    str(is_budget)))
 
                 counter = counter + 1
+
+        print(budget_counter)
