@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, Column, Integer, String, Boolean, ForeignK
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils import CurrencyType, Currency
 from sqlalchemy.ext.declarative import declarative_base
-from db import Base
+from models.base import Base
 
 class Service(Base):
     __tablename__ = 'service'

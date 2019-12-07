@@ -116,5 +116,5 @@ class DocProcessor:
                                             FieldType.SERVICE_DATE, 2)),
             "is_budget" : DocProcessor.is_budget(lines),
 
-            #"tables": DocProcessor.read_table_content(self._docx.tables)
+            "tables": DocProcessor.read_table_content(self._docx.tables)
         }
