@@ -53,7 +53,6 @@ if __name__ == "__main__":
             pprint(data['tables'])
 
             documents.append({
-                "plate": plate,
                 "vehicle_name": "",
                 "vehicle_number": "",
                 "phone1": "",

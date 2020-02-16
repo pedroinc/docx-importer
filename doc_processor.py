@@ -3,6 +3,10 @@ import re
 from docx import Document
 from enum import Enum
 from datetime import datetime
+from pprint import pprint
+from models.service import Service
+from models.service import ServicePart
+from models.service import ServiceTask
 
 class FieldType:
     #SERVICE_DATE = r'\d{2}.\d{2}.\d{4}'
@@ -25,10 +29,10 @@ class DocProcessor:
         content_lines = []
         for table in doc_tables:         
             for i, row in enumerate(table.rows):
-                text = (cell.text for cell in row.cells)
-
+                text = (cell.text for cell in row.cells)                
                 # Establish the mapping based on the first row
                 # headers; these will become the keys of our dictionary
+                
                 if i == 0:
                     keys = tuple(text)
                     continue
@@ -36,7 +40,9 @@ class DocProcessor:
                 # Construct a dictionary for this row, mapping
                 # keys to values for this row
                 row_data = dict(zip(keys, text))
-                content_lines.append(row_data)
+                
+                if row_data.get('DESCRIÇÃO DO SERVIÇO') or row_data.get('CÓD. FAB.'):
+                    content_lines.append(row_data)
                 # print(row_data)
         return content_lines
 
