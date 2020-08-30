@@ -6,14 +6,15 @@ from datetime import datetime
 
 class RegexFieldTypes:
     #SERVICE_DATE = r'\d{2}.\d{2}.\d{4}'
-    SERVICE_DATE = r'(DATA:)(.*)'       
+    SERVICE_DATE = r'(DATA:\s?)([0-9]{1,2}[\.|\/][0-9]{1,2}[\.|\/][0-9]{1,4})'       
     LICENSE_PLATE = r'(.*)([a-zA-Z]{3}\s\d{4})(.*)'
     VEHICLE_NAME = r'(CULO:)([a-zA-Z0-9. ][^#\r\n]{1,40})'    
     
     # vin number: vehicle identification number (chassi)
-    VEHICLE_NUMBER = r'(CHASSI:)([a-zA-Z0-9. ][^#\r\n]{1,18})'
-    PHONE = r'(TEL.:)(.*)([0-9/ ])'    
+    VEHICLE_NUMBER = r'(CHASSI:\s?)([a-zA-Z0-9. ][^#\r\n]{1,30})'
+    PHONE = r'[0-9|(]{1,2}[\s]?[(]?[0-9]{0,3}[)]?[\s]?[0-9]{4,5}[\s]?[-]?[0-9]{4,5}'    
     CUSTOMER = r'(PROP.:)(.*)'    
+    KILOMETERS = r'(km\s?)([0-9]{1,3}\.?[0-9]{1,3})'
 
 class DocProcessor:    
     def __init__(self, docx_obj):
