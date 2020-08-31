@@ -5,9 +5,8 @@ from enum import Enum
 from datetime import datetime
 
 class RegexFieldTypes:
-    #SERVICE_DATE = r'\d{2}.\d{2}.\d{4}'
     SERVICE_DATE = r'(DATA:\s?)([0-9]{1,2}[\.|\/][0-9]{1,2}[\.|\/][0-9]{1,4})'       
-    LICENSE_PLATE = r'(.*)([a-zA-Z]{3}\s\d{4})(.*)'
+    LICENSE_PLATE = r'(PLACA:\s)([a-zA-Z]{3}\s?[0-9][0-9A-Z][0-9][0-9])'
     VEHICLE_NAME = r'(CULO:)([a-zA-Z0-9. ][^#\r\n]{1,40})'    
     
     # vin number: vehicle identification number (chassi)
