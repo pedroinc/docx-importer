@@ -7,12 +7,11 @@ from datetime import datetime
 class RegexFieldTypes:
     SERVICE_DATE = r'(DATA:\s?)([0-9]{1,2}[\.|\/][0-9]{1,2}[\.|\/][0-9]{1,4})'       
     LICENSE_PLATE = r'(PLACA:\s)([a-zA-Z]{3}\s?[0-9][0-9A-Z][0-9][0-9])'
-    VEHICLE_NAME = r'(CULO:)([a-zA-Z0-9. ][^#\r\n]{1,40})'    
-    
-    # vin number: vehicle identification number (chassi)
-    VEHICLE_NUMBER = r'(CHASSI:\s?)([a-zA-Z0-9. ][^#\r\n]{1,30})'
+    VEHICLE_NAME = r'(CULO.?:\s?)(.*(?=\s{3})(?<=\S))'
+
+    VEHICLE_NUMBER = r'((CHASSI|VIN)\s?:\s?)(\S{1,})' #match group 3
     PHONE = r'[0-9|(]{1,2}[\s]?[(]?[0-9]{0,3}[)]?[\s]?[0-9]{4,5}[\s]?[-]?[0-9]{4,5}'    
-    CUSTOMER = r'(PROP.:)(.*)'    
+    CUSTOMER = r'(PROP.?:\s?)(.*)'    
     KILOMETERS = r'(km\s?)([0-9]{1,3}\.?[0-9]{1,3})'
 
 class DocProcessor:    
