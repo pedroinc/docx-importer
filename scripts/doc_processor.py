@@ -98,13 +98,17 @@ class DocProcessor:
                 if "CÓD. FAB." in row_data and "DISCRIMINAÇÃO" in row_data:
                     if row_data["ORIGINAL"] or row_data["OUTRA"]:
                         str_price = row_data["ORIGINAL"] if row_data["ORIGINAL"] else row_data["OUTRA"]
+                        description = row_data["DISCRIMINAÇÃO"]
+
+                        match_number = re.search("(\([0-9]+\))", description)
+                        number_of_items = int(match_number.group(1).replace("(", "").replace(")", "")) if match_number else 1
 
                         service_items.append(
                             {
                                 "type": "part",
                                 "code_factory": row_data["CÓD. FAB."],
-                                "number": 1,
-                                "description": row_data["DISCRIMINAÇÃO"],
+                                "description": description,
+                                "number": number_of_items,
                                 "price": float(str_price.replace(",", ".")),
                             }
                         )
