@@ -20,8 +20,8 @@ class CsvCreator:
 
         counter = 1
 
-        # files = [f for f in files if f.endswith('.docx')]
-        files = ["AJJ 1198 06.01.2014.docx"]
+        files = [f for f in files if f.endswith('.docx')]
+        # files = ["AJJ 1198 06.01.2014.docx"]
 
         # pprint(files)
         # exit()
@@ -33,7 +33,9 @@ class CsvCreator:
 
             doc_processor = DocProcessor(self.docs_folder, filename)
 
-            data = doc_processor.extract_data()
+            # data = doc_processor.extract_data()
+            service = doc_processor.extract_data()
+            pprint(service)
 
             # plate = data["license_plate"]
             # vehicle_name = data["vehicle_name"]

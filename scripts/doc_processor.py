@@ -97,15 +97,15 @@ class DocProcessor:
 
                 if "CÓD. FAB." in row_data and "DISCRIMINAÇÃO" in row_data:
                     if row_data["ORIGINAL"] or row_data["OUTRA"]:
+                        str_price = row_data["ORIGINAL"] if row_data["ORIGINAL"] else row_data["OUTRA"]
+
                         service_items.append(
                             {
                                 "type": "part",
                                 "code_factory": row_data["CÓD. FAB."],
                                 "number": 1,
                                 "description": row_data["DISCRIMINAÇÃO"],
-                                "price": row_data["ORIGINAL"]
-                                if row_data["ORIGINAL"]
-                                else row_data["OUTRA"],
+                                "price": float(str_price.replace(",", ".")),
                             }
                         )
 
@@ -115,8 +115,8 @@ class DocProcessor:
 
             counter += 1
 
-            pprint(service_items)
-        return content_lines
+            # pprint(service_items)
+        return service_items
 
     @staticmethod
     def remove_dot_sequence(line):
@@ -172,10 +172,9 @@ class DocProcessor:
 
                 lines.append(text)
             index = index + 1
-        # print(service)
-        # pprint(lines)
-        # exit()
-        return lines
+
+        return service
+        # return lines
 
     def read_phones(self, lines):
         pattern = RegexFieldTypes.PHONE
@@ -218,6 +217,11 @@ class DocProcessor:
         f.close()
 
     def extract_data(self):
+
+        service = self.read_lines()
+        service["items"] = DocProcessor.read_table_content(self._docx.tables)
+        return service
+
         lines = self.read_lines()
 
         for line in lines:
