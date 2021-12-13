@@ -1,6 +1,6 @@
 Babel==2.7.0
 docx==0.2.4
-lxml==4.6.3
+lxml==4.6.5
 Pillow==8.1.1
 python-docx==0.8.10
 pytz==2018.9
